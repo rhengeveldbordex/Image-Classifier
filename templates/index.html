@@ -1,25 +1,37 @@
 <!DOCTYPE html>
 <html>
+
 <head>
+    <meta charset="UTF-8">
     <title>Image Classification</title>
+    <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-    <h1>Image Classification</h1>
-    <form method="POST" action="/" enctype="multipart/form-data">
-        <input type="file" name="image" accept="image/*">
-        <input type="submit" value="Upload">
-    </form>
-    {% if error %}
-        <p>{{ error }}</p>
-    {% endif %}
-    {% if results %}
+    <div class="container">
+        <h1>Image Classification</h1>
+        <form action="/" method="post" enctype="multipart/form-data">
+            <input type="file" name="image" accept="image/*">
+            <input type="submit" value="Upload">
+        </form>
+        
+        {% if error %}
+        <p class="error">{{ error }}</p>
+        {% endif %}
+
+        {% if results %}
         <h2>Results:</h2>
-        <img src="{{ url_for('uploaded_image', filename=image_file.filename, _external=True, _scheme='http', safe=':/') }}" width="300">
-        <ul>
+        <div class="results">
             {% for result in results %}
-                <li>{{ result.label }}: {{ result.probability }}%</li>
+            <p>{{ result.label }}: {{ result.probability|round(2) }}%</p>
             {% endfor %}
-        </ul>
-    {% endif %}
+        </div>
+        {% endif %}
+
+        {% if image_file %}
+        <img src="{{ url_for('uploaded_image', filename=image_file) }}" alt="Uploaded Image">
+        {% endif %}
+    </div>
 </body>
+
 </html>

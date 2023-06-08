@@ -1,11 +1,11 @@
 import os
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, send_from_directory
 import tensorflow as tf
 from tensorflow.keras.applications.resnet50 import preprocess_input, decode_predictions
 from tensorflow.keras.preprocessing import image
 import numpy as np
 
-# Load pre-trained InceptionV3 model
+# Load pre-trained ResNet50 model
 model = tf.keras.applications.ResNet50(weights='imagenet')
 
 # Create Flask application
@@ -37,25 +37,25 @@ def upload_image():
         # Check if an image file was uploaded
         if 'image' not in request.files:
             return render_template('index.html', error='No image file uploaded')
-        
+
         image_file = request.files['image']
-        
+
         # Check if a file was selected
         if image_file.filename == '':
             return render_template('index.html', error='No file selected')
-        
+
         # Check if the file is valid
         if image_file and allowed_file(image_file.filename):
             # Save the uploaded file to a temporary location
             image_path = os.path.join(app.config['UPLOAD_FOLDER'], image_file.filename)
             image_file.save(image_path)
-            
+
             # Classify the image
             results = classify_image(image_path)
-            
+
             # Return the results to the user
-            return render_template('index.html', results=results, image_path=image_path)
-        
+            return render_template('index.html', results=results, image_file=image_file.filename)
+
     return render_template('index.html')
 
 # Function to check if the file extension is allowed
